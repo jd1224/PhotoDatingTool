@@ -71,64 +71,97 @@ def get_photos(file_list, file_types):
 				photo_list.append(i)
 				
 	return photo_list
+def provide_path(x,path):
+	choice = x.lower()
+	if choice[0] == 'y':
+		save_dir = input('Enter a path to save the photos to. \nThe dated folder will be created there: ')
+		try:
+			os.mkdir('{}\dated folder'.format(save_dir))
+			return save_dir
+		except:
+			return -1
+	elif choice[0] =='n':
+		return(path)
+	else:
+		return -2
+def choose_path():
+	path_choosing = True
+	fc = 0
+	while path_choosing:
+		path = input("enter a file path to check for pictures: ")
+		if os.path.exists(path):
+			os.chdir(path)
+			try:
+			
+				file_list = get_files(path)
+				#print(file_list)
+				path_choosing = False
+			except:
+				print('You cannot access that directory.  Try using administrator mode.')
+		else:
+			if fc<=3:
+			
+				print("Enter a valid directory path")
+				fc +=1
+				
+			elif fc>3:
+				
+				print('A valid directory looks like this: c:\\users\\name\\folder')
+				
+	return file_list
+	
+def define_save_path(path):
+	
+	pathing = True
+	while pathing:
+		save_path = provide_path(input('would you like to provide a path to save these photos. \n(NOTE: If no path is provided a new folder will be created in \n{}.'.format(path)),path)
+		if not save_path == -1 and not save_path == -2:
+			
+			print('Dated photographs will be saved to {}\dated\YYYY MM'.format(save_path))
+			pathing = False
+			
+		elif save_path == -1:
+			print('Cannot access that directory')
 
+		elif save_path == -2 :
+			print('Please choose y or n')
+	return save_path
+	
+def save_photos(photo_list,save_path):
+	bc = 0
+	for i in photo_list:
+		try:
+			
+			#print (get_date(i))
+			date = get_date(i)
+			name = date+' '+i
+			#print ('dated '+i)
+			
+		except:
+			
+			#print ('{} Undated'.format(i))
+			date = 'Undated'
+			name = date+i
+			#print ('undated '+i)
+			bc +=1
+			
+		finally:
+			if not os.path.exists('{}\dated folder\{}'.format(save_path,date)):
+				os.makedirs('{}\dated folder\{}'.format(save_path,date))
+			shutil.copy(i,'{}\dated folder\{}\{}'.format(save_path,date,name))			
+	return bc
+	
 def main_loop():
 
 	#path = 'D:\\Program Files\\Notepad++\\python3\\picchecker'
-	# variable to count the number of undated pictures
-	bc = 0
-	
 	#list of common picture file types ot check for
 	file_types = ['.jpg','.tif','.tiff','.wav','.dct']
-	running = True
-	while running:
-		path_choosing = True
-		fc = 0
-		while path_choosing:
-			path = input("enter a file path to check for pictures: ")
-			if os.path.exists(path):
-				os.chdir(path)
-				try:
-				
-					file_list = get_files(path)
-					#print(file_list)
-					path_choosing = False
-				except:
-					print('You cannot access that directory.  Try using administrator mode.')
-			else:
-				if fc<=3:
-				
-					print("Enter a valid directory path")
-					fc +=1
-				elif fc>3:
-					
-					print('A valid directory looks like this: {}'.format(sys.getcwd()))
-				
-		photo_list = get_photos(file_list,file_types)
-		
-		for i in photo_list:
-			try:
-				
-				#print (get_date(i))
-				date = get_date(i)
-				name = date+' '+i
-				#print ('dated '+i)
-				
-			except:
-				
-				#print ('{} Undated'.format(i))
-				date = 'Undated'
-				name = date+i
-				#print ('undated '+i)
-				bc +=1
-				
-			finally:
-				if not os.path.exists('dated folder\{}'.format(date)):
-					os.makedirs('dated folder\{}'.format(date))
-				shutil.copy(i,'dated folder\{}\{}'.format(date,name))
-				running = False
-				
-				
+	file_list = choose_path()
+	path = os.getcwd()
+	photo_list = get_photos(file_list,file_types)
+	print('{} photographs found in {}.'.format(len(photo_list),path))
+	save_path = define_save_path(path)
+	bc = save_photos(photo_list,save_path)		
 	print ('I could not apply a date to {} photographs'.format(bc))
 	input('Press Enter to Continue')
 				
@@ -204,7 +237,7 @@ def menu():
 if __name__=="__main__":
 	running = True
 	
-	#welcome()
+	welcome()
 	while running:
 		running = menu()
 		os.system('cls')
