@@ -71,19 +71,23 @@ def get_photos(file_list, file_types):
 				photo_list.append(i)
 				
 	return photo_list
-def provide_path(x,path):
-	choice = x.lower()
-	if choice[0] == 'y':
-		save_dir = input('Enter a path to save the photos to. \nThe dated folder will be created there: ')
-		try:
-			os.mkdir('{}\dated folder'.format(save_dir))
-			return save_dir
-		except:
-			return -1
-	elif choice[0] =='n':
-		return(path)
+def provide_path(path,x):
+	if len(x)>0:
+	
+		choice = x.lower()
+		if choice[0] == 'y':
+			save_dir = input('Enter a path to save the photos to. \nThe dated folder will be created there: ')
+			try:
+				os.mkdir('{}\dated folder'.format(save_dir))
+				return save_dir
+			except:
+				return -1
+		elif choice[0] =='n':
+			return(path)
+		else:
+			return -2
 	else:
-		return -2
+		return path
 def choose_path():
 	path_choosing = True
 	fc = 0
@@ -114,7 +118,7 @@ def define_save_path(path):
 	
 	pathing = True
 	while pathing:
-		save_path = provide_path(input('would you like to provide a path to save these photos. \n(NOTE: If no path is provided a new folder will be created in \n{}.'.format(path)),path)
+		save_path = provide_path(path, input('would you like to provide a path to save these photos. \n(NOTE: If no path is provided a new folder will be created in \n{}.'.format(path)))
 		if not save_path == -1 and not save_path == -2:
 			
 			print('Dated photographs will be saved to {}\dated\YYYY MM'.format(save_path))
@@ -182,7 +186,7 @@ def welcome():
 	typewrite("*********Based on the***|\/\/\.d''########``b./\/\/|**************************\n")
 	typewrite("*********Date Inside of*|/\/\/::############::/\/\/|**************************\n")
 	typewrite('*********The METATAGS***|/\/\/`p.##########.q`/\/\/|**************************\n')
-	typewrite('*********For Tag [36868]|/\/\/\`p.########.q`/\/\/\|**************************\n')
+	typewrite('*********Tag Num [36868]|/\/\/\`p.########.q`/\/\/\|**************************\n')
 	typewrite('************************|/\/\/\/\^q......p^/\/\/\/\|**************************\n')
 	typewrite('************************|--------------------------|**************Created*****\n')
 	typewrite('*************************Press Enter Key to Continue***************by*joshc1224\n')
